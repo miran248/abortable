@@ -1,0 +1,31 @@
+{
+  "name": "@miran248/abortable",
+  "version": "1.0.0",
+  "description": "abortable async primitives using promises",
+  "main": "lib/index.js",
+  "module": "src/index.js",
+  "repository": "git@github.com:miran248/abortable.git",
+  "author": "miran248 <miran248+github@cflow.io>",
+  "license": "MIT",
+  "keywords": [
+    "abortable",
+    "async",
+    "promise",
+    "sequence"
+  ],
+  "scripts": {
+    "build": "babel src -d lib",
+    "test": "jest --config=jest/config.js"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.7.0",
+    "@babel/core": "^7.7.2",
+    "@babel/plugin-transform-runtime": "^7.6.2",
+    "@babel/preset-env": "^7.7.1",
+    "babel-jest": "^24.9.0",
+    "jest": "^24.9.0"
+  },
+  "peerDependencies": {
+    "@babel/runtime": "^7.7.2"
+  }
+}
