@@ -24,6 +24,7 @@ jobs:
         with:
           node-version: 12
           registry-url: https://registry.npmjs.org/
+          scope: '@miran248'
       - run: npm ci
       - run: npm publish --access=public
         env:
@@ -38,6 +39,7 @@ jobs:
         with:
           node-version: 12
           registry-url: https://npm.pkg.github.com/
+          scope: '@miran248'
       - run: npm ci
       - run: npm publish
         env:
