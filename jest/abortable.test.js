@@ -28,8 +28,8 @@ test("check inputs and outputs", async() => {
   expect(resolveFn.mock.calls.length).toBe(0);
   expect(rejectFn.mock.calls.length).toBe(1);
 });
-test("no arguments -> should throw", async() => {
-  expect(() => abortable()).toThrow();
+test("no arguments -> should not throw", async() => {
+  expect(() => abortable()).not.toThrow();
 });
 test("payload -> resolve with payload -> abort -> should resolve with payload", async() => {
   const resolveFn = jest.fn();
@@ -77,4 +77,23 @@ test("payload -> reject with payload -> abort -> should reject with payload", as
   expect(resolveFn.mock.calls.length).toBe(0);
   expect(rejectFn.mock.calls.length).toBe(1);
   expect(rejectFn.mock.calls[0][0]).toBe("yay");
+});
+test("should handle undefined operations", async() => {
+  const resolveFn = jest.fn();
+  const rejectFn = jest.fn();
+
+  const response = abortable(undefined, "yay");
+
+  expect(response.length).toBe(2);
+  expect(response[0]).toEqual(expect.any(Promise));
+  expect(response[1]).toEqual(expect.any(Function));
+
+  const [ promise, abort ] = response;
+  const awaiter = promise.then(resolveFn).catch(rejectFn);
+  abort();
+
+  await awaiter;
+
+  expect(resolveFn.mock.calls.length).toBe(1);
+  expect(rejectFn.mock.calls.length).toBe(0);
 });

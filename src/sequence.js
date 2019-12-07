@@ -3,7 +3,9 @@ import abortable from "./abortable";
 export default (...operations) => (resolve, reject, payload) => {
   let abort = undefined;
 
-  operations.reverse().reduce(
+  operations.filter(
+    (operation) => typeof operation === "function"
+  ).reverse().reduce(
     (next, operation) => (payload) => {
       let promise = undefined;
 

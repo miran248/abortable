@@ -7,7 +7,12 @@ export default (operation, payload) => {
     reject = _reject;
   });
 
-  const abort = operation(resolve, reject, payload);
+  let abort = undefined;
+
+  if(typeof operation === "function")
+    abort = operation(resolve, reject, payload);
+  else
+    resolve(payload);
 
   let aborted = false;
   return [

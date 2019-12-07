@@ -85,3 +85,34 @@ test("100ms, resolve -> 50ms, resolve -> 200ms, resolve -> 250ms, abort -> shoul
   expect(rejectFn.mock.calls.length).toBe(0);
   expect(resolveFn.mock.calls[0][0]).toEqual([ "a", "b", "c" ]);
 });
+test("function, undefined -> should return function", async() => {
+  expect(() => all(
+    (resolve, reject) => {
+      resolve();
+    },
+    undefined,
+  )).toEqual(expect.any(Function));
+});
+test("should handle undefined operations", async() => {
+  const resolveFn = jest.fn();
+  const rejectFn = jest.fn();
+
+  const [ promise, abort ] = abortable(all(
+    (resolve, reject) => {
+      setTimeout(() => resolve("a"), 100);
+    },
+    undefined,
+    (resolve, reject) => {
+      setTimeout(() => resolve("c"), 200);
+    }
+  ));
+  const awaiter = promise.then(resolveFn).catch(rejectFn);
+
+  setTimeout(abort, 250);
+
+  await awaiter;
+
+  expect(resolveFn.mock.calls.length).toBe(1);
+  expect(rejectFn.mock.calls.length).toBe(0);
+  expect(resolveFn.mock.calls[0][0]).toEqual([ "a", "c" ]);
+});

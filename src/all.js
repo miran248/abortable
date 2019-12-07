@@ -1,7 +1,9 @@
 import abortable from "./abortable";
 
 export default (...operations) => (resolve, reject, payload) => {
-  let items = operations.map(
+  let items = operations.filter(
+    (operation) => typeof operation === "function"
+  ).map(
     (operation) => abortable(operation, payload)
   );
   let n = items.length;

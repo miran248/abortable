@@ -1,4 +1,4 @@
-import abortable, { sequence } from "../src";
+import abortable, { sequence, timeout } from "../src";
 
 test("check inputs and outputs", async() => {
   const returnFn1 = jest.fn();
@@ -74,4 +74,18 @@ test("payload -> 100ms, resolve -> 100ms, resolve -> 100ms, resolve -> 400ms, ab
   expect(resolveFn.mock.calls.length).toBe(1);
   expect(rejectFn.mock.calls.length).toBe(0);
   expect(resolveFn.mock.calls[0][0]).toBe("yayabc");
+});
+test("should handle undefined operations", async() => {
+  const resolveFn = jest.fn();
+  const rejectFn = jest.fn();
+
+  const [ promise, abort ] = abortable(sequence(timeout(100), undefined), 0);
+  const awaiter = promise.then(resolveFn).catch(rejectFn);
+  setTimeout(abort, 150);
+
+  await awaiter;
+
+  expect(resolveFn.mock.calls.length).toBe(1);
+  expect(rejectFn.mock.calls.length).toBe(0);
+  expect(resolveFn.mock.calls[0][0]).toBe(0);
 });

@@ -27,3 +27,16 @@ test("check inputs and outputs", async() => {
 test("no arguments -> should return function", async() => {
   expect(() => interval()).toEqual(expect.any(Function));
 });
+test("should handle undefined operations", async() => {
+  const resolveFn = jest.fn();
+  const rejectFn = jest.fn();
+
+  const [ promise, abort ] = abortable(interval(undefined, 100), 0);
+  const awaiter = promise.then(resolveFn).catch(rejectFn);
+  setTimeout(abort, 350);
+
+  await awaiter;
+
+  expect(resolveFn.mock.calls.length).toBe(1);
+  expect(rejectFn.mock.calls.length).toBe(0);
+});

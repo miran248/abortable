@@ -3,6 +3,12 @@ import timeout from "./timeout";
 import sequence from "./sequence";
 
 export default (operation, ms = 0) => (resolve, reject, payload) => {
+  if(typeof operation !== "function") {
+    resolve(payload);
+
+    return;
+  }
+
   let abort = undefined;
 
   const loop = (payload) => {

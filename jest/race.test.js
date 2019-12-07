@@ -1,4 +1,4 @@
-import abortable, { race } from "../src";
+import abortable, { race, timeout } from "../src";
 
 test("check inputs and outputs", async() => {
   const returnFn1 = jest.fn();
@@ -81,4 +81,26 @@ test("payload -> 100ms, resolve with payload -> 150ms, abort -> should resolve w
   expect(resolveFn.mock.calls.length).toBe(1);
   expect(rejectFn.mock.calls.length).toBe(0);
   expect(resolveFn.mock.calls[0][0]).toBe("a");
+});
+test("function, undefined -> should return function", async() => {
+  expect(() => race(
+    (resolve, reject) => {
+      resolve();
+    },
+    undefined,
+  )).toEqual(expect.any(Function));
+});
+test("should handle undefined operations", async() => {
+  const resolveFn = jest.fn();
+  const rejectFn = jest.fn();
+
+  const [ promise, abort ] = abortable(race(timeout(100), undefined), 0);
+  const awaiter = promise.then(resolveFn).catch(rejectFn);
+  setTimeout(abort, 150);
+
+  await awaiter;
+
+  expect(resolveFn.mock.calls.length).toBe(1);
+  expect(rejectFn.mock.calls.length).toBe(0);
+  expect(resolveFn.mock.calls[0][0]).toBe(0);
 });
