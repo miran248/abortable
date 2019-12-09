@@ -68,23 +68,23 @@ promise.then(console.log) // returns [ "a", "b", "c" ]
 // abort();
 ```
 
-### interval
+### conditional
 ```javascript
-import abortable, { interval } from "@miran248/abortable";
+import abortable, { conditional } from "@miran248/abortable";
 
-const [ promise, abort ] = abortable(interval((resolve, reject, payload) => {
-  // do something
-  resolve(payload);
+const [ promise, abort ] = abortable(conditional(
+  (resolve, reject, payload) => {
+    resolve(payload < 3);
+  },
+  (resolve, reject, payload) => {
+    resolve(payload + 1);
+  },
+), 0);
 
-  return () => {
-    // cleanup
-  };
-}, 1000), "data");
-
-promise.then(console.log) // will never resolve
+promise.then(console.log) // returns [ true, 1 ]
 .catch(console.error);
 
-abort(); // must be aborted at some point
+// abort();
 ```
 
 ### race
@@ -125,6 +125,25 @@ const [ promise, abort ] = abortable(race(
 ), "data");
 
 promise.then(console.log) // returns "b", aborts others
+.catch(console.error);
+
+// abort();
+```
+
+### repeat
+```javascript
+import abortable, { repeat } from "@miran248/abortable";
+
+const [ promise, abort ] = abortable(repeat(
+  (resolve, reject, payload) => {
+    resolve(payload < 3);
+  },
+  (resolve, reject, payload) => {
+    resolve(payload + 1);
+  },
+), 0);
+
+promise.then(console.log) // returns 3
 .catch(console.error);
 
 // abort();
